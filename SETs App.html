@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Theory Pro | Degree Level Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+
+:root {
+  --primary: #4f46e5;
+  --primary-h: #4338ca;
+  --primary-light: #eef2ff;
+  --primary-mid: #c7d2fe;
+  --accent: #7c3aed;
+  --accent-light: #f5f3ff;
+  --bg: #f1f5f9;
+  --white: #ffffff;
+  --text: #0f172a;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --ok: #059669;
+  --ok-light: #d1fae5;
+  --ok-border: #6ee7b7;
+  --err: #dc2626;
+  --err-light: #fee2e2;
+  --err-border: #fca5a5;
+  --warn-light: #fef3c7;
+  --warn-border: #fde68a;
+  --r: 12px;
+  --shadow: 0 4px 24px rgba(79,70,229,0.09);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 15% 5%, #eef2ff 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 90%, #f5f3ff 0%, transparent 55%);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px 12px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ═══════════════ HEADER ═══════════════ */
+header {
+  width: 100%;
+  max-width: 1160px;
+  margin-bottom: 20px;
+}
+
+.header-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 26px 32px 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
+}
+
+.header-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+}
+
+.header-text { flex: 1; min-width: 200px; }
+
+.header-text h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.header-text p {
+  color: var(--text-light);
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.badge-author { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-mid); }
+.badge-level  { background: var(--accent-light);  color: var(--accent);  border: 1px solid #ddd6fe; }
+
+/* ═══════════════ SCORE BAR ═══════════════ */
+.score-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 1160px;
+}
+
+.score-chip {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-blue   { background: var(--primary); }
+.dot-green  { background: #10b981; }
+.dot-red    { background: #ef4444; }
+.score-num  { color: var(--primary); font-size: 1rem; font-weight: 800; min-width: 18px; text-align: center; }
+
+/* ═══════════════ TABS ═══════════════ */
+.tabs-wrap {
+  width: 100%;
+  max-width: 1160px;
+  margin-bottom: 18px;
+}
+
+.tabs {
+  display: flex;
+  gap: 5px;
+  background: var(--white);
+  padding: 7px;
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-light);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.tab-icon { font-size: 0.95rem; }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(79,70,229,0.38);
+}
+.tab-btn:hover:not(.active) { background: var(--primary-light); color: var(--primary); }
+
+/* ═══════════════ APP CONTAINER ═══════════════ */
+.app-container {
+  background: var(--white);
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 1160px;
+  border: 1px solid var(--border);
+}
+
+/* ═══════════════ VIEWS ═══════════════ */
+.view { display: none; width: 100%; }
+.view.active {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 26px;
+  align-items: start;
+}
+
+/* Venn view uses flex */
+.view.active.venn-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  justify-content: center;
+}
+
+/* ═══════════════ MAIN PRACTICE COLUMN ═══════════════ */
+.practice-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.section-desc {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+/* ═══════════════ STUDY GUIDE COLUMN ═══════════════ */
+.study-guide {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px;
+  font-size: 0.88rem;
+  position: sticky;
+  top: 16px;
+}
+
+.guide-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.guide-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* ═══════════════ SYMBOL TABLE ═══════════════ */
+.sym-table { width: 100%; border-collapse: collapse; }
+.sym-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+  font-size: 0.84rem;
+}
+.sym-table td:first-child {
+  width: 44px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+.sym-table td strong { color: #111827; }
+.sym-table tr:last-child td { border-bottom: none; }
+
+/* ═══════════════ QUESTION BOXES ═══════════════ */
+.question-box {
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+  padding: 14px 18px;
+  border-radius: 0 var(--r) var(--r) 0;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #1e1b4b;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.big-q {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  text-align: center;
+  padding: 20px 16px;
+  background: var(--white);
+  border: 2px dashed var(--primary-mid);
+  border-radius: var(--r);
+  color: var(--primary);
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+.find-box {
+  background: var(--accent-light);
+  border: 1px solid #ddd6fe;
+  border-radius: var(--r);
+  padding: 16px 20px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.find-box .expr-large {
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+/* ═══════════════ BUTTONS ═══════════════ */
+.row { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border: none;
+  padding: 13px 20px;
+  font-size: 0.97rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  flex: 1;
+  min-width: 120px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+  font-family: 'Inter', sans-serif;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,70,229,0.42); }
+.btn-primary:active { transform: none; }
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  padding: 13px 20px;
+  font-size: 0.97rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  flex: 1;
+  min-width: 120px;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+/* ═══════════════ TRUE / FALSE ═══════════════ */
+.tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tf-btn {
+  padding: 16px 10px;
+  font-size: 1.1rem;
+  border: 2px solid var(--border);
+  background: var(--white);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: 'Inter', sans-serif;
+}
+.tf-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.tf-btn.true-btn  { color: var(--ok);  } .tf-btn.true-btn:hover  { background: var(--ok-light);  border-color: #10b981; }
+.tf-btn.false-btn { color: var(--err); } .tf-btn.false-btn:hover { background: var(--err-light); border-color: #ef4444; }
+
+/* ═══════════════ INPUTS ═══════════════ */
+.input-group { display: flex; flex-direction: column; gap: 10px; }
+.input-group input, .mc-input-group textarea {
+  padding: 13px 16px;
+  font-size: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border 0.2s;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+}
+.input-group input:focus, .mc-input-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.input-group input::placeholder, .mc-input-group textarea::placeholder { color: #94a3b8; }
+
+code {
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+  color: var(--accent);
+}
+
+/* ═══════════════ FEEDBACK ═══════════════ */
+.feedback {
+  display: none;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+.feedback.correct { display: block; background: var(--ok-light); color: #065f46; border: 1px solid var(--ok-border); }
+.feedback.correct::before { content: '✓  '; }
+.feedback.wrong   { display: block; background: var(--err-light); color: #991b1b; border: 1px solid var(--err-border); }
+.feedback.wrong::before { content: '✗  '; }
+
+/* ═══════════════ STEP BOX ═══════════════ */
+.step-box {
+  display: none;
+  background: var(--warn-light);
+  border: 1px solid var(--warn-border);
+  padding: 16px 20px;
+  border-radius: 10px;
+}
+.step-box.visible { display: block; }
+.step-box h3 { color: #92400e; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.step-list { padding-left: 20px; line-height: 2; color: #78350f; font-size: 0.9rem; }
+.step-list li { margin-bottom: 2px; }
+
+/* ═══════════════ ACCEPTABLE ANSWERS ═══════════════ */
+.accepted-answers {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.accepted-answers h4 { color: #166534; font-size: 0.88rem; margin-bottom: 8px; }
+.answer-pill {
+  display: inline-block;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.84rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: #166534;
+  margin: 3px 4px 3px 0;
+  font-weight: 600;
+}
+
+/* ═══════════════ MULTIPLE CHOICE ═══════════════ */
+.mc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mc-btn {
+  padding: 13px 14px;
+  font-size: 0.92rem;
+  border: 2px solid var(--border);
+  background: var(--white);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.2s;
+  line-height: 1.4;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-word;
+}
+.mc-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.mc-btn.selected-correct { background: var(--ok-light); border-color: var(--ok); color: #065f46; }
+.mc-btn.selected-wrong   { background: var(--err-light); border-color: var(--err); color: #991b1b; }
+.mc-btn.reveal-correct   { background: var(--ok-light); border-color: var(--ok); }
+
+/* ═══════════════ VENN SPECIFIC ═══════════════ */
+.canvas-section { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+canvas {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  cursor: crosshair;
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;
+}
+
+.controls-section { flex: 1; min-width: 260px; max-width: 400px; display: flex; flex-direction: column; gap: 14px; }
+
+.toggle-row { display: flex; gap: 8px; width: 100%; }
+
+.toggle-btn {
+  padding: 9px 12px;
+  border: 1.5px solid var(--primary-mid);
+  background: var(--white);
+  color: var(--primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.toggle-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+}
+.toggle-btn:hover:not(.active) { background: var(--primary-light); }
+
+.display-screen {
+  background: var(--primary-light);
+  border: 2px solid var(--primary-mid);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  font-weight: 800;
+  text-align: center;
+  min-height: 52px;
+  letter-spacing: 2px;
+  color: var(--primary);
+  transition: all 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+.display-screen.error { color: var(--err); border-color: var(--err-border); background: var(--err-light); }
+.display-screen.hint  { color: var(--text-light); font-size: 0.97rem; font-weight: 400; letter-spacing: 0; font-family: 'Inter', sans-serif; }
+
+.keypad { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+.keypad button {
+  padding: 11px 6px;
+  font-size: 1.1rem;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: all 0.15s;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+.keypad button:hover { background: var(--primary-light); border-color: var(--primary-mid); color: var(--primary); transform: translateY(-1px); }
+.keypad button:active { transform: none; }
+.keypad button.set-btn { background: var(--primary-light); color: var(--primary); border-color: var(--primary-mid); }
+.keypad button.op-btn  { background: var(--accent-light); color: var(--accent); border-color: #ddd6fe; }
+.keypad button.danger-btn { grid-column: span 4; color: var(--err); background: var(--err-light); border-color: var(--err-border); font-size: 0.88rem; font-family: 'Inter', sans-serif; }
+
+.key-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e1b4b;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 10;
+}
+.keypad button:hover .key-tooltip { display: block; }
+
+.sym-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.sym-pill {
+  background: var(--primary-light);
+  border: 1px solid var(--primary-mid);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  color: var(--primary);
+  font-weight: 700;
+  display: flex; align-items: center; gap: 4px;
+}
+.sym-pill .s { font-size: 0.95rem; font-family: 'JetBrains Mono', monospace; }
+
+/* Progress bar */
+.progress-area {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: var(--primary-light);
+  border-radius: 10px;
+  padding: 11px 14px;
+  border: 1px solid var(--primary-mid);
+}
+.progress-area.show { display: flex; }
+.progress-label { font-size: 0.8rem; color: var(--primary); font-weight: 700; white-space: nowrap; }
+.progress-track { flex: 1; height: 8px; background: var(--white); border-radius: 4px; overflow: hidden; border: 1px solid var(--primary-mid); }
+.progress-fill  { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px; transition: width 0.4s ease; }
+.progress-pct   { font-size: 0.8rem; font-weight: 800; color: var(--primary); min-width: 36px; text-align: right; }
+
+/* ═══════════════ MOBILE ═══════════════ */
+@media (max-width: 860px) {
+  .view.active { grid-template-columns: 1fr; }
+  .study-guide { position: static; order: 2; }
+  .practice-main { order: 1; }
+}
+
+@media (max-width: 600px) {
+  body { padding: 14px 10px 32px; }
+  .app-container { padding: 18px 14px; }
+  .header-card { padding: 20px 18px 18px; }
+  .mc-grid { grid-template-columns: 1fr; }
+  .tf-grid { gap: 10px; }
+  .big-q { font-size: 1.3rem; letter-spacing: 0; }
+  .keypad button { padding: 10px 4px; font-size: 1rem; }
+  .row { flex-direction: column; }
+  .btn-primary, .btn-secondary { min-width: 0; }
+}
+
+@media (max-width: 420px) {
+  .tabs { gap: 4px; padding: 6px; }
+  .tab-btn { padding: 8px 10px; font-size: 0.78rem; }
+  .score-chip { padding: 5px 10px; font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="header-card">
+    <div class="header-icon">∈</div>
+    <div class="header-text">
+      <h1>Set Theory Pro</h1>
+      <p>Interactive Visual Explorer &amp; Degree-Level Practice Modules</p>
+      <div class="badge-row">
+        <span class="badge badge-author">✦ Developed by Darnel Hoarau</span>
+        <span class="badge badge-level">📐 Degree Level</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SCORE BAR ═══ -->
+<div class="score-bar">
+  <div class="score-chip"><span class="dot dot-blue"></span>Session&nbsp;<span class="score-num" id="sc-total">0</span></div>
+  <div class="score-chip"><span class="dot dot-green"></span>Correct&nbsp;<span class="score-num" id="sc-correct">0</span></div>
+  <div class="score-chip"><span class="dot dot-red"></span>Wrong&nbsp;<span class="score-num" id="sc-wrong">0</span></div>
+  <div class="score-chip">🔥&nbsp;Streak&nbsp;<span class="score-num" id="sc-streak">0</span></div>
+</div>
+
+<!-- ═══ TABS ═══ -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('explorer',this)"><span class="tab-icon">⬤</span>Venn Diagrams</button>
+    <button class="tab-btn" onclick="switchTab('membership',this)"><span class="tab-icon">∈</span>Membership</button>
+    <button class="tab-btn" onclick="switchTab('subsets',this)"><span class="tab-icon">⊆</span>Subsets &amp; |A|</button>
+    <button class="tab-btn" onclick="switchTab('builder',this)"><span class="tab-icon">{}</span>Builder → Roster</button>
+    <button class="tab-btn" onclick="switchTab('roster2builder',this)"><span class="tab-icon">↺</span>Roster → Builder</button>
+    <button class="tab-btn" onclick="switchTab('operations',this)"><span class="tab-icon">∪</span>Operations</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div class="app-container">
+
+  <!-- ══ VIEW 1: VENN ══ -->
+  <div id="view-explorer" class="view active venn-view">
+    <div class="canvas-section">
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="btn-2set" onclick="setNumSets(2)">2 Sets (A, B)</button>
+        <button class="toggle-btn" id="btn-3set" onclick="setNumSets(3)">3 Sets (A, B, C)</button>
+      </div>
+      <canvas id="venn" width="400" height="340"></canvas>
+      <p id="mode-instruction" style="margin:0;font-size:0.83rem;color:var(--text-light);font-weight:600;text-align:center;">Mode: Build an expression with the keypad</p>
+    </div>
+
+    <div class="controls-section">
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="mode-expr" onclick="setMode('expr')">Expression → Diagram</button>
+        <button class="toggle-btn" id="mode-diag" onclick="setMode('diag')">Diagram → Expression</button>
+      </div>
+
+      <div class="display-screen hint" id="display">Type expression…</div>
+
+      <div class="keypad" id="input-controls">
+        <button class="set-btn" onclick="typeChar('A')">A</button>
+        <button class="set-btn" onclick="typeChar('B')">B</button>
+        <button class="set-btn" onclick="typeChar('C')" id="btn-c" disabled>C</button>
+        <button class="set-btn" onclick="typeChar('U')">U</button>
+
+        <button class="op-btn" onclick="typeChar('∪')">∪<span class="key-tooltip">Union</span></button>
+        <button class="op-btn" onclick="typeChar('∩')">∩<span class="key-tooltip">Intersection</span></button>
+        <button class="op-btn" onclick="typeChar('\'')">′<span class="key-tooltip">Complement</span></button>
+        <button class="op-btn" onclick="typeChar('-')">−<span class="key-tooltip">Difference</span></button>
+
+        <button onclick="typeChar('(')">(</button>
+        <button onclick="typeChar(')')">)</button>
+        <button class="op-btn" onclick="typeChar('∅')">∅<span class="key-tooltip">Empty Set</span></button>
+        <button onclick="backspace()">⌫</button>
+
+        <button class="danger-btn" onclick="clearExpr()">✕  Clear Expression</button>
+      </div>
+
+      <div class="sym-pills">
+        <div class="sym-pill"><span class="s">∪</span>Union</div>
+        <div class="sym-pill"><span class="s">∩</span>Intersection</div>
+        <div class="sym-pill"><span class="s">−</span>Difference</div>
+        <div class="sym-pill"><span class="s">′</span>Complement</div>
+        <div class="sym-pill"><span class="s">∅</span>Empty</div>
+      </div>
+
+      <div class="study-guide" style="position:static;">
+        <div class="guide-title">📌 Quick Reference</div>
+        <table class="sym-table">
+          <tr><td>∪</td><td><strong>Union:</strong> all elements from both</td></tr>
+          <tr><td>∩</td><td><strong>Intersection:</strong> only in both</td></tr>
+          <tr><td>A′</td><td><strong>Complement:</strong> U minus A</td></tr>
+          <tr><td>A−B</td><td><strong>Difference:</strong> A without B's elements</td></tr>
+          <tr><td>∅</td><td><strong>Empty set:</strong> no elements</td></tr>
+          <tr><td>U</td><td><strong>Universal set:</strong> all elements</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 2: MEMBERSHIP ══ -->
+  <div id="view-membership" class="view">
+    <div class="practice-main">
+      <h2 class="section-title">Element &amp; Membership Logic</h2>
+      <p class="section-desc">Is the following statement <strong>True</strong> or <strong>False</strong>? Evaluate based on the set definition given.</p>
+
+      <div class="question-box" id="mem-context"></div>
+      <div class="big-q" id="mem-statement"></div>
+
+      <div class="tf-grid">
+        <button class="tf-btn true-btn" onclick="checkMembership(true)">✓ &nbsp;True</button>
+        <button class="tf-btn false-btn" onclick="checkMembership(false)">✗ &nbsp;False</button>
+      </div>
+
+      <div id="mem-feedback" class="feedback"></div>
+      <div class="row"><button class="btn-secondary" onclick="generateMembershipQuestion()">↻ Next Question</button></div>
+
+      <div class="progress-area" id="mem-progress">
+        <span class="progress-label">Module Score</span>
+        <div class="progress-track"><div class="progress-fill" id="mem-bar" style="width:0%"></div></div>
+        <span class="progress-pct" id="mem-pct">—</span>
+      </div>
+    </div>
+
+    <div class="study-guide">
+      <div class="guide-title">📌 Membership Symbols</div>
+      <table class="sym-table">
+        <tr><td>∈</td><td><strong>Element of:</strong> x belongs to the set<br><em style="color:var(--text-light)">e.g. 3 ∈ {1, 2, 3}</em></td></tr>
+        <tr><td>∉</td><td><strong>Not element of:</strong> x does not belong<br><em style="color:var(--text-light)">e.g. 5 ∉ {1, 2, 3}</em></td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <div class="guide-title">🔢 Standard Number Sets</div>
+      <table class="sym-table">
+        <tr><td>ℕ</td><td><strong>Natural:</strong> {1, 2, 3, …}</td></tr>
+        <tr><td>W</td><td><strong>Whole:</strong> {0, 1, 2, 3, …}</td></tr>
+        <tr><td>ℤ</td><td><strong>Integers:</strong> {…, −2, −1, 0, 1, 2, …}</td></tr>
+        <tr><td>ℤ⁺</td><td><strong>Pos. Integers:</strong> {1, 2, 3, …}</td></tr>
+        <tr><td>ℚ</td><td><strong>Rational:</strong> all fractions p/q</td></tr>
+        <tr><td>ℝ</td><td><strong>Real:</strong> all on the number line</td></tr>
+        <tr><td>ℝ\ℚ</td><td><strong>Irrational:</strong> e.g. √2, π, e</td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <p style="font-size:0.8rem;color:var(--text-light);">Hierarchy: ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</p>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 3: SUBSETS ══ -->
+  <div id="view-subsets" class="view">
+    <div class="practice-main">
+      <h2 class="section-title">Subsets &amp; Cardinality</h2>
+      <p class="section-desc">Determine the correct relation or calculate the exact value for the set property shown.</p>
+
+      <div class="question-box" id="sub-context"></div>
+      <div class="big-q" id="sub-statement"></div>
+
+      <div class="input-group" id="sub-input-group">
+        <input type="number" id="sub-input" placeholder="Enter a number…" onkeypress="if(event.key==='Enter') checkSubset()">
+        <div class="row"><button class="btn-primary" onclick="checkSubset()">Submit Answer</button></div>
+      </div>
+      <div class="tf-grid" id="sub-tf-group" style="display:none;">
+        <button class="tf-btn true-btn" onclick="checkSubset(true)">✓ &nbsp;True</button>
+        <button class="tf-btn false-btn" onclick="checkSubset(false)">✗ &nbsp;False</button>
+      </div>
+
+      <div id="sub-feedback" class="feedback"></div>
+      <div class="row"><button class="btn-secondary" onclick="generateSubsetQuestion()">↻ Next Question</button></div>
+
+      <div class="progress-area" id="sub-progress">
+        <span class="progress-label">Module Score</span>
+        <div class="progress-track"><div class="progress-fill" id="sub-bar" style="width:0%"></div></div>
+        <span class="progress-pct" id="sub-pct">—</span>
+      </div>
+    </div>
+
+    <div class="study-guide">
+      <div class="guide-title">📌 Subset Symbols</div>
+      <table class="sym-table">
+        <tr><td>⊆</td><td><strong>Subset:</strong> All of A in B (A may = B)</td></tr>
+        <tr><td>⊂</td><td><strong>Proper subset:</strong> All of A in B, A ≠ B</td></tr>
+        <tr><td>⊄</td><td><strong>Not a subset:</strong> ≥1 element of A not in B</td></tr>
+        <tr><td>⊇</td><td><strong>Superset:</strong> B contains all of A</td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <div class="guide-title">🔢 Cardinality Formulas</div>
+      <table class="sym-table">
+        <tr><td>|A|</td><td><strong>Cardinality:</strong> count of elements<br><em style="color:var(--text-light)">Also n(A)</em></td></tr>
+        <tr><td>2ⁿ</td><td><strong>Total subsets</strong> (incl. ∅ and A)</td></tr>
+        <tr><td>2ⁿ−1</td><td><strong>Proper subsets</strong> (excl. A itself)</td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <p style="font-size:0.8rem;color:var(--text-light);line-height:1.6;">
+        ∅ ⊆ every set.<br>
+        A ⊆ A for all A.<br>
+        A ⊂ B  and  |A| &lt; |B| always.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 4: SET-BUILDER → ROSTER ══ -->
+  <div id="view-builder" class="view">
+    <div class="practice-main">
+      <h2 class="section-title">Set-Builder → Roster Form</h2>
+      <p class="section-desc">A set is given in <strong>set-builder notation</strong>. List all elements separated by commas, e.g. <code>1, 4, 9</code>. Type <code>empty</code> if the set is empty.</p>
+
+      <div class="question-box" id="builder-q-text"></div>
+
+      <div class="input-group">
+        <input type="text" id="builder-input" placeholder="e.g. 1, 2, 3" onkeypress="if(event.key==='Enter') checkBuilder()">
+        <div class="row">
+          <button class="btn-primary" onclick="checkBuilder()">Submit Answer</button>
+          <button class="btn-secondary" onclick="generateBuilderQuestion()">↻ New Question</button>
+        </div>
+      </div>
+
+      <div id="builder-feedback" class="feedback"></div>
+      <div id="builder-step" class="step-box">
+        <h3>💡 Step-by-Step Explanation</h3>
+        <ul class="step-list" id="builder-step-list"></ul>
+      </div>
+
+      <div class="progress-area" id="bui-progress">
+        <span class="progress-label">Module Score</span>
+        <div class="progress-track"><div class="progress-fill" id="bui-bar" style="width:0%"></div></div>
+        <span class="progress-pct" id="bui-pct">—</span>
+      </div>
+    </div>
+
+    <div class="study-guide">
+      <div class="guide-title">📖 Reading Set-Builder</div>
+      <p style="font-size:0.85rem;line-height:1.75;margin-bottom:10px;">
+        <strong>{ x ∈ ℤ | x &gt; 0 }</strong><br>
+        <em>"The set of all x in ℤ such that x is greater than 0."</em>
+      </p>
+      <p style="font-size:0.85rem;line-height:1.75;margin-bottom:10px;">
+        The vertical bar <strong>|</strong> (or colon <strong>:</strong>) means <em>"such that"</em>.
+      </p>
+      <div class="guide-divider"></div>
+      <table class="sym-table">
+        <tr><td>|</td><td>"Such that"</td></tr>
+        <tr><td>∈</td><td>"Is an element of"</td></tr>
+        <tr><td>ℕ</td><td>Naturals {1,2,3,…}</td></tr>
+        <tr><td>ℤ</td><td>Integers {…,−1,0,1,…}</td></tr>
+        <tr><td>ℝ</td><td>Real Numbers</td></tr>
+        <tr><td>ℚ</td><td>Rationals</td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <p style="font-size:0.8rem;color:var(--text-light);line-height:1.6;">
+        Sets are <em>unordered</em>: {1,2} = {2,1}<br>
+        Duplicates are ignored: {1,1,2} = {1,2}
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 5: ROSTER → SET-BUILDER ══ -->
+  <div id="view-roster2builder" class="view">
+    <div class="practice-main">
+      <h2 class="section-title">Roster → Set-Builder Notation</h2>
+      <p class="section-desc">
+        A set is given in <strong>roster form</strong>. Choose the best set-builder description — or type your own.
+        Multiple correct notations exist; accepted forms are shown after answering.
+      </p>
+
+      <div class="question-box" id="r2b-context"></div>
+      <div class="big-q" id="r2b-roster"></div>
+
+      <p style="font-size:0.88rem;color:var(--text-light);font-weight:600;margin-bottom:-4px;">Choose the best description:</p>
+      <div class="mc-grid" id="r2b-mc-grid"></div>
+
+      <div style="position:relative;display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:0.8rem;color:var(--text-light);font-weight:600;white-space:nowrap;">or type your own</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="r2b-input"
+          placeholder="e.g.  { x ∈ ℕ | x is odd, 1 ≤ x ≤ 9 }"
+          onkeypress="if(event.key==='Enter') checkRoster2Builder()">
+        <div class="row">
+          <button class="btn-primary" onclick="checkRoster2Builder()">Submit My Answer</button>
+          <button class="btn-secondary" onclick="generateRoster2BuilderQ()">↻ New Question</button>
+        </div>
+      </div>
+
+      <div id="r2b-feedback" class="feedback"></div>
+
+      <div id="r2b-accepted" class="accepted-answers" style="display:none;">
+        <h4>✓ Accepted Set-Builder Forms:</h4>
+        <div id="r2b-accepted-list"></div>
+      </div>
+
+      <div id="r2b-step" class="step-box">
+        <h3>💡 How to write this in set-builder notation</h3>
+        <ul class="step-list" id="r2b-step-list"></ul>
+      </div>
+
+      <div class="progress-area" id="r2b-progress">
+        <span class="progress-label">Module Score</span>
+        <div class="progress-track"><div class="progress-fill" id="r2b-bar" style="width:0%"></div></div>
+        <span class="progress-pct" id="r2b-pct">—</span>
+      </div>
+    </div>
+
+    <div class="study-guide">
+      <div class="guide-title">✏️ Writing Set-Builder</div>
+      <p style="font-size:0.85rem;line-height:1.75;margin-bottom:8px;">
+        General form:<br>
+        <strong>{ variable ∈ domain | condition }</strong>
+      </p>
+      <p style="font-size:0.82rem;color:var(--text-light);line-height:1.7;margin-bottom:10px;">
+        There is often <em>more than one</em> correct way to write a set in set-builder notation.
+        Both symbolic and English descriptions are valid!
+      </p>
+      <div class="guide-divider"></div>
+      <div class="guide-title">📝 Examples</div>
+      <table class="sym-table">
+        <tr>
+          <td style="width:auto;white-space:nowrap;font-size:0.78rem;font-family:'JetBrains Mono',monospace;color:var(--text-light);">{2,4,6,8}</td>
+          <td style="font-size:0.82rem;">{ x ∈ ℕ | x is even, x ≤ 8 }</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap;font-size:0.78rem;font-family:'JetBrains Mono',monospace;color:var(--text-light);">{1,4,9,16}</td>
+          <td style="font-size:0.82rem;">{ x ∈ ℕ | x = n² for n ∈ ℕ, n ≤ 4 }</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap;font-size:0.78rem;font-family:'JetBrains Mono',monospace;color:var(--text-light);">{−2,−1,0,1,2}</td>
+          <td style="font-size:0.82rem;">{ x ∈ ℤ | |x| ≤ 2 }</td>
+        </tr>
+      </table>
+      <div class="guide-divider"></div>
+      <div class="guide-title">🔑 Common Patterns</div>
+      <table class="sym-table">
+        <tr><td style="font-size:0.78rem;width:auto;white-space:nowrap;">Even</td><td style="font-size:0.82rem;">x = 2k, k ∈ ℕ<br><em>or</em> "x is even"</td></tr>
+        <tr><td style="font-size:0.78rem;white-space:nowrap;">Odd</td><td style="font-size:0.82rem;">x = 2k−1, k ∈ ℕ<br><em>or</em> "x is odd"</td></tr>
+        <tr><td style="font-size:0.78rem;white-space:nowrap;">Multiples</td><td style="font-size:0.82rem;">x = kn for k ∈ ℕ</td></tr>
+        <tr><td style="font-size:0.78rem;white-space:nowrap;">Range</td><td style="font-size:0.82rem;">a ≤ x ≤ b</td></tr>
+        <tr><td style="font-size:0.78rem;white-space:nowrap;">Squares</td><td style="font-size:0.82rem;">x = k², k ∈ ℕ</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 6: OPERATIONS ══ -->
+  <div id="view-operations" class="view">
+    <div class="practice-main">
+      <h2 class="section-title">Calculate Set Operations</h2>
+      <p class="section-desc">Given the specific sets below, compute the result. List elements separated by commas in ascending order.</p>
+
+      <div class="question-box" id="op-context-text"></div>
+
+      <div class="find-box">
+        <span>Find:</span>
+        <span class="expr-large" id="op-q-text"></span>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="op-input" placeholder="e.g. 2, 4, 6" onkeypress="if(event.key==='Enter') checkOperation()">
+        <div class="row">
+          <button class="btn-primary" onclick="checkOperation()">Submit Answer</button>
+          <button class="btn-secondary" onclick="generateOperationQuestion()">↻ New Question</button>
+        </div>
+      </div>
+
+      <div id="op-feedback" class="feedback"></div>
+      <div id="op-step" class="step-box">
+        <h3>💡 Step-by-Step Computation</h3>
+        <ul class="step-list" id="op-step-list"></ul>
+      </div>
+
+      <div class="progress-area" id="ope-progress">
+        <span class="progress-label">Module Score</span>
+        <div class="progress-track"><div class="progress-fill" id="ope-bar" style="width:0%"></div></div>
+        <span class="progress-pct" id="ope-pct">—</span>
+      </div>
+    </div>
+
+    <div class="study-guide">
+      <div class="guide-title">📌 Operations</div>
+      <p style="font-size:0.83rem;line-height:1.6;margin-bottom:8px;">Solve innermost <strong>( )</strong> first — just like PEMDAS.</p>
+      <table class="sym-table">
+        <tr><td>∪</td><td><strong>Union:</strong> everything from both</td></tr>
+        <tr><td>∩</td><td><strong>Intersection:</strong> only in both</td></tr>
+        <tr><td>A−B</td><td><strong>Difference:</strong> A without B's elements</td></tr>
+        <tr><td>A′</td><td><strong>Complement:</strong> U minus A</td></tr>
+        <tr><td>A△B</td><td><strong>Sym. Diff.:</strong> (A−B)∪(B−A)</td></tr>
+      </table>
+      <div class="guide-divider"></div>
+      <div class="guide-title">⚖️ Key Laws</div>
+      <table class="sym-table">
+        <tr><td style="font-size:0.75rem;white-space:nowrap;">De Morgan</td><td style="font-size:0.82rem;">(A∪B)′ = A′∩B′<br>(A∩B)′ = A′∪B′</td></tr>
+        <tr><td style="font-size:0.75rem;">Commut.</td><td style="font-size:0.82rem;">A∪B = B∪A</td></tr>
+        <tr><td style="font-size:0.75rem;">Distrib.</td><td style="font-size:0.82rem;">A∩(B∪C) = (A∩B)∪(A∩C)</td></tr>
+        <tr><td style="font-size:0.75rem;">Absorb.</td><td style="font-size:0.82rem;">A∪(A∩B) = A</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end app-container -->
+
+<script>
+// ══════════════════════════════════════════
+// SCORE TRACKER
+// ══════════════════════════════════════════
+const score = { total:0, correct:0, wrong:0, streak:0 };
+const modScore = {
+  membership:     {c:0,t:0,pre:'mem'},
+  subsets:        {c:0,t:0,pre:'sub'},
+  builder:        {c:0,t:0,pre:'bui'},
+  roster2builder: {c:0,t:0,pre:'r2b'},
+  operations:     {c:0,t:0,pre:'ope'}
+};
+
+function recordScore(mod, correct) {
+  score.total++;
+  if (correct) { score.correct++; score.streak++; }
+  else { score.wrong++; score.streak = 0; }
+  document.getElementById('sc-total').textContent   = score.total;
+  document.getElementById('sc-correct').textContent = score.correct;
+  document.getElementById('sc-wrong').textContent   = score.wrong;
+  document.getElementById('sc-streak').textContent  = score.streak;
+  if (mod && modScore[mod]) {
+    modScore[mod].t++;
+    if (correct) modScore[mod].c++;
+    const pre = modScore[mod].pre;
+    const p = Math.round((modScore[mod].c / modScore[mod].t) * 100);
+    const bar   = document.getElementById(pre+'-bar');
+    const pct   = document.getElementById(pre+'-pct');
+    const prog  = document.getElementById(pre+'-progress');
+    if (bar) bar.style.width = p + '%';
+    if (pct) pct.textContent = p + '%';
+    if (prog) prog.classList.add('show');
+  }
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
+  btn.classList.add('active');
+  const view = document.getElementById('view-' + tabId);
+  view.style.display = '';
+  view.classList.add('active');
+  if (tabId === 'membership'     && !currentMemQ)   generateMembershipQuestion();
+  if (tabId === 'subsets'        && !currentSubQ)   generateSubsetQuestion();
+  if (tabId === 'builder'        && !currentBuilderQ) generateBuilderQuestion();
+  if (tabId === 'roster2builder' && !currentR2BQ)   generateRoster2BuilderQ();
+  if (tabId === 'operations'     && !currentOpQ)    generateOperationQuestion();
+}
+
+// ══════════════════════════════════════════
+// MATH UTILS
+// ══════════════════════════════════════════
+function parseUserInput(str) {
+  str = String(str).replace(/[{}]/g,'').trim();
+  if (str.toLowerCase() === 'empty' || str === '∅' || str === '') return [];
+  return str.split(',').map(x => x.trim()).filter(x => x !== '')
+    .sort((a,b) => {
+      let nA = Number(a), nB = Number(b);
+      return (!isNaN(nA) && !isNaN(nB)) ? nA-nB : String(a).localeCompare(String(b));
+    });
+}
+
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++)
+    if (String(a[i]).toLowerCase() !== String(b[i]).toLowerCase()) return false;
+  return true;
+}
+
+function formatSet(arr) {
+  if (!arr || arr.length === 0) return '{ } (Empty)';
+  return '{ ' + arr.join(', ') + ' }';
+}
+
+function generateRandomSubset(universe, size) {
+  return [...universe].sort(() => 0.5 - Math.random()).slice(0, size)
+    .sort((a,b) => {
+      let nA=Number(a), nB=Number(b);
+      return (!isNaN(nA)&&!isNaN(nB)) ? nA-nB : String(a).localeCompare(String(b));
+    });
+}
+
+// ══════════════════════════════════════════
+// MODULE 2: MEMBERSHIP
+// ══════════════════════════════════════════
+let currentMemQ = null;
+
+const membershipTemplates = [
+  { gen: () => {
+    let A = [], start = Math.floor(Math.random()*5);
+    for (let i=start; i<start+5; i++) A.push(i*2);
+    let isEl = Math.random()>0.5, isTrue = Math.random()>0.5;
+    let val  = isTrue===isEl ? A[Math.floor(Math.random()*A.length)] : A[0]+1;
+    let sym  = isEl ? '∈' : '∉';
+    return {
+      context: `Let A = { ${A.join(', ')} }`,
+      statement: `${val} ${sym} A`,
+      ans: isTrue,
+      exp: isEl
+        ? (isTrue ? `${val} appears in A, so the ∈ statement is True.`
+                  : `${val} is NOT in A, making the ∈ statement False.`)
+        : (isTrue ? `${val} is not in A — the ∉ statement is True.`
+                  : `${val} is actually in A, making the ∉ statement False.`)
+    };
+  }},
+  { gen: () => {
+    const qs = [
+      { q:'−5 ∈ ℕ',   ans:false, exp:'ℕ only has positive counting numbers {1,2,3,…}. Negative numbers are in ℤ.' },
+      { q:'0 ∈ ℤ⁺',   ans:false, exp:'ℤ⁺ means strictly positive: {1,2,3,…}. Zero is excluded.' },
+      { q:'−3 ∈ ℤ',   ans:true,  exp:'ℤ includes all negative whole numbers, zero, and positives.' },
+      { q:'0.5 ∉ ℤ',  ans:true,  exp:'0.5 is not a whole number; ℤ contains integers only, so ∉ is correct.' },
+      { q:'3.14 ∈ ℚ', ans:true,  exp:'3.14 = 314/100, a ratio of integers — it is rational.' },
+      { q:'√2 ∈ ℚ',   ans:false, exp:'√2 cannot be written as p/q for integers p, q. It is irrational (ℝ\\ℚ).' },
+      { q:'π ∈ ℝ',    ans:true,  exp:'π lies on the real number line, so it is real — even though irrational.' },
+      { q:'−7 ∈ ℕ',   ans:false, exp:'ℕ only contains positive counting numbers.' },
+      { q:'0 ∈ W',    ans:true,  exp:'W = {0,1,2,…} explicitly includes zero.' },
+      { q:'100 ∈ ℕ',  ans:true,  exp:'100 is a positive counting number, so yes, 100 ∈ ℕ.' },
+      { q:'1/3 ∈ ℚ',  ans:true,  exp:'1/3 is a fraction of two integers — rational by definition.' },
+      { q:'ℕ ⊂ ℤ',    ans:true,  exp:'Every natural number is an integer, and ℤ has negatives ℕ does not, so ℕ ⊂ ℤ.' },
+      { q:'e ∈ ℚ',    ans:false, exp:"Euler's number e ≈ 2.718… is transcendental and irrational, so e ∉ ℚ." },
+      { q:'0 ∈ ℕ',    ans:false, exp:'Most definitions of ℕ start at 1. Zero is in W (Whole numbers) but not ℕ.' },
+    ];
+    let ch = qs[Math.floor(Math.random()*qs.length)];
+    return { context:'Consider the standard Mathematical number sets (ℕ, ℤ, ℚ, ℝ, …)', statement:ch.q, ans:ch.ans, exp:ch.exp };
+  }},
+  { gen: () => {
+    const letters = ['a','b','c','d','e','f','g'];
+    const A = generateRandomSubset(letters, 4);
+    const isIn = Math.random()>0.5, isEl = Math.random()>0.5;
+    const val = isEl ? A[0] : 'z';
+    const sym = isIn ? '∈' : '∉';
+    const ans = isIn === isEl;
+    return {
+      context: `Let P = { ${A.join(', ')} }`,
+      statement: `${val} ${sym} P`,
+      ans,
+      exp: ans
+        ? `${val} ${isEl?'appears':'does not appear'} in P — the statement is True.`
+        : `${val} ${isEl?'appears':'does not appear'} in P, contradicting the ${sym} symbol — False.`
+    };
+  }}
+];
+
+function generateMembershipQuestion() {
+  const t = membershipTemplates[Math.floor(Math.random()*membershipTemplates.length)];
+  currentMemQ = t.gen();
+  document.getElementById('mem-context').textContent   = currentMemQ.context;
+  document.getElementById('mem-statement').textContent = currentMemQ.statement;
+  document.getElementById('mem-feedback').style.display = 'none';
+}
+
+function checkMembership(userAns) {
+  if (!currentMemQ) return;
+  const ok = userAns === currentMemQ.ans;
+  recordScore('membership', ok);
+  const fb = document.getElementById('mem-feedback');
+  fb.innerHTML = `${ok?'Correct!':'Incorrect.'} <span style="font-weight:400">${currentMemQ.exp}</span>`;
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+}
+
+// ══════════════════════════════════════════
+// MODULE 3: SUBSETS & CARDINALITY
+// ══════════════════════════════════════════
+let currentSubQ = null;
+
+const subsetTemplates = [
+  { gen: () => {
+    let size = Math.floor(Math.random()*6)+2;
+    let A = generateRandomSubset([1,2,3,4,5,6,7,8,9,10,11,12],size);
+    return { type:'input', context:`A = ${formatSet(A)}`, statement:`Find the cardinality |A|`,
+      ans:size, exp:`|A| counts elements in A. There are exactly ${size} elements.` };
+  }},
+  { gen: () => {
+    let size = Math.floor(Math.random()*4)+2;
+    let A = generateRandomSubset(['a','b','c','d','e','f','g','h'],size);
+    return { type:'input', context:`B = ${formatSet(A)}`, statement:`How many distinct subsets does B have?`,
+      ans:Math.pow(2,size), exp:`Formula: 2ⁿ where n=|B|=${size}. So 2^${size}=${Math.pow(2,size)} subsets (including ∅ and B).` };
+  }},
+  { gen: () => {
+    let size = Math.floor(Math.random()*4)+2;
+    let A = generateRandomSubset([1,2,3,4,5,6,7,8,9,10],size);
+    return { type:'input', context:`C = ${formatSet(A)}`, statement:`How many proper subsets does C have?`,
+      ans:Math.pow(2,size)-1, exp:`Formula: 2ⁿ−1 = 2^${size}−1 = ${Math.pow(2,size)-1}. (Excludes C itself.)` };
+  }},
+  { gen: () => {
+    let bSz = Math.floor(Math.random()*3)+4;
+    let B = generateRandomSubset([1,2,3,4,5,6,7,8,9,10],bSz);
+    let sc = Math.floor(Math.random()*3);
+    let A  = [...B];
+    if (sc===0) A.splice(Math.floor(Math.random()*A.length),1);
+    else if (sc===2) { A.splice(0,1); A.push(20+Math.floor(Math.random()*5)); }
+    A.sort((a,b)=>a-b);
+    let qt = Math.floor(Math.random()*2), sym = qt===0?'⊆':'⊂';
+    let isTrue = qt===0 ? (sc===0||sc===1) : (sc===0);
+    let exp = qt===0
+      ? (isTrue ? 'All elements of A are in B — valid subset.' : 'At least one element of A is not in B.')
+      : (isTrue ? 'All of A is in B, and A≠B — proper subset (⊂).'
+                : (sc===1 ? 'A equals B. A proper subset must be strictly smaller.' : 'At least one element of A is missing from B.'));
+    return { type:'tf', context:`A = ${formatSet(A)}\nB = ${formatSet(B)}`, statement:`A ${sym} B`, ans:isTrue, exp };
+  }}
+];
+
+function generateSubsetQuestion() {
+  const t = subsetTemplates[Math.floor(Math.random()*subsetTemplates.length)];
+  currentSubQ = t.gen();
+  document.getElementById('sub-context').innerHTML   = currentSubQ.context.replace('\n','<br>');
+  document.getElementById('sub-statement').textContent = currentSubQ.statement;
+  document.getElementById('sub-feedback').style.display = 'none';
+  if (currentSubQ.type==='tf') {
+    document.getElementById('sub-input-group').style.display='none';
+    document.getElementById('sub-tf-group').style.display='grid';
+  } else {
+    document.getElementById('sub-input-group').style.display='flex';
+    document.getElementById('sub-tf-group').style.display='none';
+    document.getElementById('sub-input').value='';
+  }
+}
+
+function checkSubset(tfAns=null) {
+  if (!currentSubQ) return;
+  let ok = currentSubQ.type==='tf'
+    ? tfAns===currentSubQ.ans
+    : parseInt(document.getElementById('sub-input').value)===currentSubQ.ans;
+  recordScore('subsets', ok);
+  const fb = document.getElementById('sub-feedback');
+  fb.innerHTML = ok
+    ? `Correct! <span style="font-weight:400">${currentSubQ.exp}</span>`
+    : `Incorrect. The answer is <strong>${currentSubQ.ans===true?'True':currentSubQ.ans===false?'False':currentSubQ.ans}</strong>. <span style="font-weight:400">${currentSubQ.exp}</span>`;
+  fb.className = 'feedback '+(ok?'correct':'wrong');
+}
+
+// ══════════════════════════════════════════
+// MODULE 4: SET-BUILDER → ROSTER
+// ══════════════════════════════════════════
+let currentBuilderQ = null;
+
+const builderTemplates = [
+  { gen: () => {
+    let r1=Math.floor(Math.random()*5)+1, r2=r1+Math.floor(Math.random()*4)+1;
+    let ans=[r1,r2].sort((a,b)=>a-b);
+    let q=`{ x ∈ ℝ | x² − ${r1+r2}x + ${r1*r2} = 0 }`;
+    return { q, ans:ans.map(String), steps:[
+      `Solve the quadratic: x² − ${r1+r2}x + ${r1*r2} = 0`,
+      `Factor: (x − ${r1})(x − ${r2}) = 0`,
+      `Solutions: x = ${r1} or x = ${r2}`,
+      `Roster form: { ${ans.join(', ')} }`
+    ]};
+  }},
+  { gen: () => {
+    let lim=Math.floor(Math.random()*4)+3;
+    let ans=[]; for(let i=1;i<=lim;i++) ans.push(String(i));
+    return { q:`{ x ∈ ℕ | 2x + 1 ≤ ${2*lim+1} }`, ans, steps:[
+      `Solve: 2x + 1 ≤ ${2*lim+1}  →  x ≤ ${lim}`,
+      `x ∈ ℕ: list natural numbers 1 to ${lim}`,
+      `Roster: { ${ans.join(', ')} }`
+    ]};
+  }},
+  { gen: () => {
+    let a=Math.floor(Math.random()*3)+2;
+    let ans=[]; for(let i=-(a-1);i<=(a-1);i++) ans.push(String(i));
+    return { q:`{ x ∈ ℤ | |x| < ${a} }`, ans, steps:[
+      `|x| < ${a}  means  −${a} < x < ${a}`,
+      `x ∈ ℤ: integers strictly between −${a} and ${a}`,
+      `Roster: { ${ans.join(', ')} }`
+    ]};
+  }},
+  { gen: () => {
+    let n=Math.floor(Math.random()*4)+2;
+    let ans=[]; for(let i=1;i<=n;i++) ans.push(String(i*i));
+    return { q:`{ x ∈ ℕ | x = k² for some k ∈ ℕ, k ≤ ${n} }`, ans, steps:[
+      `Perfect squares k² for k = 1,…,${n}`,
+      `Values: ${Array.from({length:n},(_,i)=>`${i+1}²=${(i+1)*(i+1)}`).join(', ')}`,
+      `Roster: { ${ans.join(', ')} }`
+    ]};
+  }},
+  { gen: () => {
+    let s=Math.floor(Math.random()*3)+2, cnt=Math.floor(Math.random()*3)+3;
+    let ans=[]; for(let i=0;i<cnt;i++) ans.push(String(s+2*i));
+    let mx=s+2*(cnt-1);
+    return { q:`{ x ∈ ℤ | x is even, ${s} ≤ x ≤ ${mx} }`, ans, steps:[
+      `List even integers from ${s} to ${mx}`,
+      `Step by 2: ${ans.join(', ')}`,
+      `Roster: { ${ans.join(', ')} }`
+    ]};
+  }},
+  { gen: () => {
+    let m=Math.floor(Math.random()*3)+2, cnt=Math.floor(Math.random()*3)+3;
+    let ans=[]; for(let i=1;i<=cnt;i++) ans.push(String(m*i));
+    let mx=m*cnt;
+    return { q:`{ x ∈ ℕ | x is a multiple of ${m}, x ≤ ${mx} }`, ans, steps:[
+      `Multiples of ${m} up to ${mx}: ${m}×1, ${m}×2, …`,
+      `Values: ${ans.join(', ')}`,
+      `Roster: { ${ans.join(', ')} }`
+    ]};
+  }}
+];
+
+function generateBuilderQuestion() {
+  const letter=['A','B','C','D','P'][Math.floor(Math.random()*5)];
+  const t=builderTemplates[Math.floor(Math.random()*builderTemplates.length)];
+  currentBuilderQ=t.gen();
+  document.getElementById('builder-q-text').textContent=`${letter} = ${currentBuilderQ.q}`;
+  document.getElementById('builder-input').value='';
+  document.getElementById('builder-feedback').style.display='none';
+  document.getElementById('builder-step').classList.remove('visible');
+}
+
+function checkBuilder() {
+  if (!currentBuilderQ) return;
+  const userInput=parseUserInput(document.getElementById('builder-input').value);
+  const ok=arraysEqual(userInput,currentBuilderQ.ans);
+  recordScore('builder',ok);
+  const fb=document.getElementById('builder-feedback');
+  fb.style.display='block';
+  if (ok) {
+    fb.textContent='Correct! Well done.'; fb.className='feedback correct';
+    document.getElementById('builder-step').classList.remove('visible');
+  } else {
+    fb.textContent=`Incorrect. Correct answer: ${formatSet(currentBuilderQ.ans)}. See explanation below.`;
+    fb.className='feedback wrong';
+    const ul=document.getElementById('builder-step-list');
+    ul.innerHTML='';
+    currentBuilderQ.steps.forEach(s=>{ let li=document.createElement('li'); li.textContent=s; ul.appendChild(li); });
+    document.getElementById('builder-step').classList.add('visible');
+  }
+}
+
+// ══════════════════════════════════════════
+// MODULE 5: ROSTER → SET-BUILDER (NEW)
+// ══════════════════════════════════════════
+let currentR2BQ = null;
+
+/* Each question has:
+   roster      – display string e.g. "{ 2, 4, 6, 8 }"
+   elements    – array of strings
+   accepted    – array of accepted keyword/phrase sets (user must match ≥1 accepted form)
+   acceptedFull– array of example full notations (shown after answer)
+   steps       – explanation steps
+   mcOptions   – 4 option strings (index 0 = correct)
+*/
+const r2bTemplates = [
+  // Even numbers in range
+  () => {
+    let m=Math.floor(Math.random()*3)+1, cnt=Math.floor(Math.random()*3)+3;
+    let start=m*2, els=[]; for(let i=0;i<cnt;i++) els.push(String(start+2*i));
+    let max=Number(els[els.length-1]);
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        ['even','ℤ',`${start}`], ['even','ℕ',`${start}`], ['even','2k'],
+        ['even','x=2k'],['x is even'],['2n','ℤ'],['2n','ℕ']
+      ],
+      acceptedFull: [
+        `{ x ∈ ℤ | x is even, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℕ | x = 2k, k ∈ ℕ, ${start/2} ≤ k ≤ ${max/2} }`,
+        `{ x ∈ ℤ | x is an even integer between ${start} and ${max} inclusive }`
+      ],
+      steps: [
+        `The elements ${els.join(', ')} are all even numbers.`,
+        `They range from ${start} to ${max} with a step of 2.`,
+        `Domain: these are integers (ℤ) or naturals (ℕ).`,
+        `Condition: x is even AND ${start} ≤ x ≤ ${max}.`,
+        `Set-Builder: { x ∈ ℤ | x is even, ${start} ≤ x ≤ ${max} }`,
+        `Alternatively: { x ∈ ℕ | x = 2k, k ∈ ℕ, k between ${start/2} and ${max/2} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℤ | x is even, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℕ | x is odd, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℤ | x > ${start} }`,
+        `{ x ∈ ℤ | ${start} ≤ x ≤ ${max} }`
+      ]
+    };
+  },
+  // Odd numbers in range
+  () => {
+    let m=Math.floor(Math.random()*3)+1, cnt=Math.floor(Math.random()*3)+3;
+    let start=m*2-1, els=[]; for(let i=0;i<cnt;i++) els.push(String(start+2*i));
+    let max=Number(els[els.length-1]);
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        ['odd','ℤ',`${start}`],['odd','ℕ',`${start}`],
+        ['odd','x=2k-1'],['x is odd'],['2k−1'],['2n−1'],['2k-1']
+      ],
+      acceptedFull: [
+        `{ x ∈ ℤ | x is odd, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℕ | x = 2k − 1, k ∈ ℕ, k ≤ ${(max+1)/2} }`,
+        `{ x ∈ ℤ | x is an odd integer between ${start} and ${max} inclusive }`
+      ],
+      steps: [
+        `The elements ${els.join(', ')} are all odd numbers.`,
+        `They range from ${start} to ${max}, step 2.`,
+        `Condition: x is odd AND ${start} ≤ x ≤ ${max}.`,
+        `Set-Builder: { x ∈ ℤ | x is odd, ${start} ≤ x ≤ ${max} }`,
+        `Alternatively: { x ∈ ℕ | x = 2k − 1, k ∈ ℕ, k ≤ ${(max+1)/2} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℤ | x is odd, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℤ | x is even, ${start} ≤ x ≤ ${max} }`,
+        `{ x ∈ ℕ | x ≥ ${start} }`,
+        `{ x ∈ ℤ | ${start} ≤ x ≤ ${max} }`
+      ]
+    };
+  },
+  // Perfect squares
+  () => {
+    let n=Math.floor(Math.random()*3)+3;
+    let els=[]; for(let i=1;i<=n;i++) els.push(String(i*i));
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        ['perfect square'],['k²','ℕ'],['n²','ℕ'],['square'],['x=k²'],['x=n²'],
+        ['k squared'],['n squared']
+      ],
+      acceptedFull: [
+        `{ x ∈ ℕ | x = k² for some k ∈ ℕ, k ≤ ${n} }`,
+        `{ x ∈ ℕ | x is a perfect square, x ≤ ${n*n} }`,
+        `{ x ∈ ℤ | √x ∈ ℕ, x ≤ ${n*n} }`
+      ],
+      steps: [
+        `The elements are 1², 2², 3², … = 1, 4, 9, … — perfect squares.`,
+        `The largest element is ${n*n} = ${n}².`,
+        `Domain: natural numbers (ℕ).`,
+        `Set-Builder: { x ∈ ℕ | x = k² for some k ∈ ℕ, k ≤ ${n} }`,
+        `English form: { x ∈ ℕ | x is a perfect square, x ≤ ${n*n} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℕ | x = k², k ∈ ℕ, k ≤ ${n} }`,
+        `{ x ∈ ℕ | x is even, x ≤ ${n*n} }`,
+        `{ x ∈ ℕ | x is prime, x ≤ ${n*n} }`,
+        `{ x ∈ ℕ | x ≤ ${n} }`
+      ]
+    };
+  },
+  // Multiples
+  () => {
+    let m=Math.floor(Math.random()*4)+2, cnt=Math.floor(Math.random()*3)+3;
+    let els=[]; for(let i=1;i<=cnt;i++) els.push(String(m*i));
+    let mx=m*cnt;
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        [`multiple of ${m}`],[`divisible by ${m}`],[`x=${m}k`],[`${m}k`],[`x=${m}n`],[`x is a multiple of ${m}`]
+      ],
+      acceptedFull: [
+        `{ x ∈ ℕ | x is a multiple of ${m}, x ≤ ${mx} }`,
+        `{ x ∈ ℕ | x = ${m}k, k ∈ ℕ, k ≤ ${cnt} }`,
+        `{ x ∈ ℕ | ${m} | x, x ≤ ${mx} }`
+      ],
+      steps: [
+        `The elements are ${m}×1, ${m}×2, … = multiples of ${m}.`,
+        `The largest is ${mx} = ${m}×${cnt}.`,
+        `Condition: x is a multiple of ${m} AND x ≤ ${mx}.`,
+        `Set-Builder: { x ∈ ℕ | x = ${m}k, k ∈ ℕ, k ≤ ${cnt} }`,
+        `English form: { x ∈ ℕ | x is a multiple of ${m}, x ≤ ${mx} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℕ | x = ${m}k, k ∈ ℕ, k ≤ ${cnt} }`,
+        `{ x ∈ ℕ | x = ${m+1}k, k ∈ ℕ, k ≤ ${cnt} }`,
+        `{ x ∈ ℤ | x < ${mx} }`,
+        `{ x ∈ ℕ | x is even, x ≤ ${mx} }`
+      ]
+    };
+  },
+  // Absolute value / symmetric integers
+  () => {
+    let n=Math.floor(Math.random()*3)+2;
+    let els=[]; for(let i=-n;i<=n;i++) els.push(String(i));
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        [`|x| ≤ ${n}`],[`|x|<=${n}`],[`|x| ≤ ${n}`],
+        [`-${n} ≤ x ≤ ${n}`],[`x between -${n} and ${n}`],
+        [`absolute value`]
+      ],
+      acceptedFull: [
+        `{ x ∈ ℤ | |x| ≤ ${n} }`,
+        `{ x ∈ ℤ | −${n} ≤ x ≤ ${n} }`,
+        `{ x ∈ ℤ | x is between −${n} and ${n} inclusive }`
+      ],
+      steps: [
+        `The elements ${els.join(', ')} are symmetric integers around 0.`,
+        `They range from −${n} to ${n}.`,
+        `Domain: integers ℤ.`,
+        `Condition: |x| ≤ ${n} (equivalently −${n} ≤ x ≤ ${n}).`,
+        `Set-Builder: { x ∈ ℤ | |x| ≤ ${n} }`,
+        `Equivalent: { x ∈ ℤ | −${n} ≤ x ≤ ${n} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℤ | |x| ≤ ${n} }`,
+        `{ x ∈ ℤ | |x| < ${n} }`,
+        `{ x ∈ ℕ | x ≤ ${n} }`,
+        `{ x ∈ ℤ | x ≤ ${n} }`
+      ]
+    };
+  },
+  // Positive integers in simple range
+  () => {
+    let lo=Math.floor(Math.random()*3)+2, hi=lo+Math.floor(Math.random()*5)+3;
+    let els=[]; for(let i=lo;i<=hi;i++) els.push(String(i));
+    return {
+      roster:`{ ${els.join(', ')} }`,
+      elements: els,
+      accepted: [
+        [`${lo} ≤ x ≤ ${hi}`],[`${lo}≤x≤${hi}`],[`x between ${lo} and ${hi}`],
+        [`x ≥ ${lo}`,`x ≤ ${hi}`],[`integers from ${lo} to ${hi}`]
+      ],
+      acceptedFull: [
+        `{ x ∈ ℤ | ${lo} ≤ x ≤ ${hi} }`,
+        `{ x ∈ ℕ | ${lo} ≤ x ≤ ${hi} }`,
+        `{ x ∈ ℤ | x is an integer between ${lo} and ${hi} inclusive }`
+      ],
+      steps: [
+        `The elements are consecutive integers from ${lo} to ${hi}.`,
+        `Domain: naturals ℕ or integers ℤ (both valid here).`,
+        `Condition: ${lo} ≤ x ≤ ${hi}.`,
+        `Set-Builder: { x ∈ ℕ | ${lo} ≤ x ≤ ${hi} }`,
+        `Also valid: { x ∈ ℤ | ${lo} ≤ x ≤ ${hi} }`
+      ],
+      mcOptions: [
+        `{ x ∈ ℕ | ${lo} ≤ x ≤ ${hi} }`,
+        `{ x ∈ ℕ | x < ${lo} }`,
+        `{ x ∈ ℕ | x > ${hi} }`,
+        `{ x ∈ ℤ | x is even, ${lo} ≤ x ≤ ${hi} }`
+      ]
+    };
+  }
+];
+
+function generateRoster2BuilderQ() {
+  const t = r2bTemplates[Math.floor(Math.random()*r2bTemplates.length)];
+  currentR2BQ = t();
+
+  // Shuffle mc options (keep correct answer trackable)
+  let opts = [...currentR2BQ.mcOptions];
+  const correct = opts[0];
+  opts = opts.sort(() => 0.5 - Math.random());
+  currentR2BQ._correctMC = correct;
+
+  document.getElementById('r2b-context').textContent  = 'Given the following set in roster form:';
+  document.getElementById('r2b-roster').textContent   = currentR2BQ.roster;
+  document.getElementById('r2b-input').value          = '';
+  document.getElementById('r2b-feedback').style.display = 'none';
+  document.getElementById('r2b-accepted').style.display = 'none';
+  document.getElementById('r2b-step').classList.remove('visible');
+
+  const grid = document.getElementById('r2b-mc-grid');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = opt;
+    btn.onclick = () => checkMCAnswer(btn, opt, correct);
+    grid.appendChild(btn);
+  });
+}
+
+function checkMCAnswer(btn, chosen, correct) {
+  // Disable all MC buttons
+  document.querySelectorAll('.mc-btn').forEach(b => b.onclick = null);
+  if (chosen === correct) {
+    btn.classList.add('selected-correct');
+    showR2BResult(true, 'mc');
+  } else {
+    btn.classList.add('selected-wrong');
+    // Reveal the correct one
+    document.querySelectorAll('.mc-btn').forEach(b => {
+      if (b.textContent === correct) b.classList.add('reveal-correct');
+    });
+    showR2BResult(false, 'mc');
+  }
+}
+
+function checkRoster2Builder() {
+  if (!currentR2BQ) return;
+  const raw = document.getElementById('r2b-input').value.trim();
+  if (!raw) return;
+  const ok = checkR2BText(raw);
+  showR2BResult(ok, 'text');
+}
+
+function checkR2BText(raw) {
+  const lower = raw.toLowerCase();
+  // Check against accepted keyword sets — user must include at least one full accepted group
+  for (const group of currentR2BQ.accepted) {
+    if (group.every(kw => lower.includes(kw.toLowerCase()))) return true;
+  }
+  return false;
+}
+
+function showR2BResult(ok, source) {
+  recordScore('roster2builder', ok);
+  const fb = document.getElementById('r2b-feedback');
+  if (ok) {
+    fb.innerHTML = source === 'mc'
+      ? 'Correct! That is a valid set-builder description.'
+      : 'Correct! Your notation captures the pattern well.';
+    fb.className = 'feedback correct';
+  } else {
+    fb.innerHTML = source === 'mc'
+      ? `Not quite. The best answer is shown in green. See accepted forms and steps below.`
+      : `Not quite — check your keywords and conditions. Accepted forms are shown below.`;
+    fb.className = 'feedback wrong';
+  }
+  fb.style.display = 'block';
+
+  // Show accepted forms
+  const accDiv = document.getElementById('r2b-accepted');
+  const accList = document.getElementById('r2b-accepted-list');
+  accList.innerHTML = '';
+  currentR2BQ.acceptedFull.forEach(f => {
+    const pill = document.createElement('span');
+    pill.className = 'answer-pill';
+    pill.textContent = f;
+    accList.appendChild(pill);
+  });
+  accDiv.style.display = 'block';
+
+  // Show steps
+  const ul = document.getElementById('r2b-step-list');
+  ul.innerHTML = '';
+  currentR2BQ.steps.forEach(s => {
+    const li = document.createElement('li'); li.textContent = s; ul.appendChild(li);
+  });
+  document.getElementById('r2b-step').classList.add('visible');
+}
+
+// ══════════════════════════════════════════
+// MODULE 6: OPERATIONS
+// ══════════════════════════════════════════
+let currentOpQ = null;
+
+const setEngine = {
+  union:    (a,b) => [...new Set([...a,...b])].sort((x,y)=>x-y),
+  intersect:(a,b) => a.filter(x=>b.includes(x)).sort((x,y)=>x-y),
+  diff:     (a,b) => a.filter(x=>!b.includes(x)).sort((x,y)=>x-y),
+  comp:     (a,u) => u.filter(x=>!a.includes(x)).sort((x,y)=>x-y),
+  symDiff:  (a,b) => {
+    return [...new Set([...a.filter(x=>!b.includes(x)),...b.filter(x=>!a.includes(x))])].sort((x,y)=>x-y);
+  }
+};
+
+const opGenerators = [
+  { str:'A ∩ B ∩ C', eval:(env)=>{
+    let ab=setEngine.intersect(env.A,env.B), ans=setEngine.intersect(ab,env.C);
+    return { ans, steps:[`A ∩ B = ${formatSet(ab)}`,`(A ∩ B) ∩ C = ${formatSet(ans)}`]};
+  }},
+  { str:"(A′ ∪ B) ∩ C", eval:(env)=>{
+    let ac=setEngine.comp(env.A,env.U), acub=setEngine.union(ac,env.B), ans=setEngine.intersect(acub,env.C);
+    return { ans, steps:[`A′ = ${formatSet(ac)}`,`A′ ∪ B = ${formatSet(acub)}`,`(A′ ∪ B) ∩ C = ${formatSet(ans)}`]};
+  }},
+  { str:'(A − B) ∪ (B − A)', eval:(env)=>{
+    let ab=setEngine.diff(env.A,env.B), ba=setEngine.diff(env.B,env.A), ans=setEngine.union(ab,ba);
+    return { ans, steps:[`A − B = ${formatSet(ab)}`,`B − A = ${formatSet(ba)}`,`(A−B) ∪ (B−A) = ${formatSet(ans)}`]};
+  }},
+  { str:'(A ∪ B) − C', eval:(env)=>{
+    let aub=setEngine.union(env.A,env.B), ans=setEngine.diff(aub,env.C);
+    return { ans, steps:[`A ∪ B = ${formatSet(aub)}`,`(A ∪ B) − C = ${formatSet(ans)}`]};
+  }},
+  { str:"A ∩ (B ∪ C)′", eval:(env)=>{
+    let buc=setEngine.union(env.B,env.C), bucC=setEngine.comp(buc,env.U), ans=setEngine.intersect(env.A,bucC);
+    return { ans, steps:[`B ∪ C = ${formatSet(buc)}`,`(B ∪ C)′ = ${formatSet(bucC)}`,`A ∩ (B∪C)′ = ${formatSet(ans)}`]};
+  }},
+  { str:'A △ B', eval:(env)=>{
+    let ans=setEngine.symDiff(env.A,env.B), ad=setEngine.diff(env.A,env.B), bd=setEngine.diff(env.B,env.A);
+    return { ans, steps:[`A − B = ${formatSet(ad)}`,`B − A = ${formatSet(bd)}`,`A △ B = ${formatSet(ans)}`]};
+  }},
+  { str:"(A ∩ B)′", eval:(env)=>{
+    let ab=setEngine.intersect(env.A,env.B), ans=setEngine.comp(ab,env.U);
+    return { ans, steps:[`A ∩ B = ${formatSet(ab)}`,`(A ∩ B)′ = U − (A ∩ B) = ${formatSet(ans)}`]};
+  }},
+  { str:'A ∪ (B ∩ C)', eval:(env)=>{
+    let bc=setEngine.intersect(env.B,env.C), ans=setEngine.union(env.A,bc);
+    return { ans, steps:[`B ∩ C = ${formatSet(bc)}`,`A ∪ (B ∩ C) = ${formatSet(ans)}`]};
+  }}
+];
+
+function generateOperationQuestion() {
+  let U=[]; for(let i=1;i<=10;i++) U.push(i);
+  let env={ U, A:generateRandomSubset(U,5), B:generateRandomSubset(U,5), C:generateRandomSubset(U,4) };
+  const t=opGenerators[Math.floor(Math.random()*opGenerators.length)];
+  const r=t.eval(env);
+  currentOpQ={ env, str:t.str, ans:r.ans.map(String), steps:r.steps };
+  document.getElementById('op-context-text').innerHTML=
+    `U = ${formatSet(env.U)}<br>A = ${formatSet(env.A)}<br>B = ${formatSet(env.B)}<br>C = ${formatSet(env.C)}`;
+  document.getElementById('op-q-text').textContent=t.str;
+  document.getElementById('op-input').value='';
+  document.getElementById('op-feedback').style.display='none';
+  document.getElementById('op-step').classList.remove('visible');
+}
+
+function checkOperation() {
+  if (!currentOpQ) return;
+  const inp=parseUserInput(document.getElementById('op-input').value);
+  const ok=arraysEqual(inp,currentOpQ.ans);
+  recordScore('operations',ok);
+  const fb=document.getElementById('op-feedback');
+  fb.style.display='block';
+  if (ok) {
+    fb.textContent='Correct! Excellent set algebra.'; fb.className='feedback correct';
+    document.getElementById('op-step').classList.remove('visible');
+  } else {
+    fb.textContent=`Incorrect. Correct answer: ${formatSet(currentOpQ.ans)}. See steps below.`;
+    fb.className='feedback wrong';
+    const ul=document.getElementById('op-step-list'); ul.innerHTML='';
+    currentOpQ.steps.forEach(s=>{ let li=document.createElement('li'); li.textContent=s; ul.appendChild(li); });
+    document.getElementById('op-step').classList.add('visible');
+  }
+}
+
+// ══════════════════════════════════════════
+// MODULE 1: VENN DIAGRAM
+// ══════════════════════════════════════════
+let numSets=2, mode='expr', currentExpression='', selectedRegions=new Set();
+const canvas=document.getElementById('venn');
+const ctx=canvas.getContext('2d');
+const W=canvas.width, H=canvas.height;
+let circles={};
+
+function updateGeometry() {
+  if (numSets===2) {
+    circles={ A:{x:145,y:170,r:95}, B:{x:255,y:170,r:95} };
+    document.getElementById('btn-c').disabled=true;
+  } else {
+    circles={ A:{x:160,y:145,r:88}, B:{x:240,y:145,r:88}, C:{x:200,y:215,r:88} };
+    document.getElementById('btn-c').disabled=false;
+  }
+}
+
+function setNumSets(n) {
+  numSets=n;
+  document.getElementById('btn-2set').classList.toggle('active',n===2);
+  document.getElementById('btn-3set').classList.toggle('active',n===3);
+  if (n===2 && currentExpression.includes('C')) currentExpression='';
+  updateGeometry(); selectedRegions.clear(); renderCanvas();
+}
+
+function setMode(m) {
+  mode=m;
+  document.getElementById('mode-expr').classList.toggle('active',m==='expr');
+  document.getElementById('mode-diag').classList.toggle('active',m==='diag');
+  const ic=document.getElementById('input-controls'), ins=document.getElementById('mode-instruction');
+  if (m==='diag') {
+    ic.style.display='none'; ins.textContent='Mode: Click regions on the diagram';
+    selectedRegions.clear(); currentExpression='∅';
+  } else {
+    ic.style.display='grid'; ins.textContent='Mode: Build an expression with the keypad';
+    if (currentExpression==='∅') currentExpression='';
+  }
+  renderCanvas();
+}
+
+function typeChar(ch) {
+  if (currentExpression==='∅') currentExpression='';
+  currentExpression+=(ch==='∪'||ch==='∩'||ch==='-') ? ` ${ch} ` : ch;
+  renderCanvas();
+}
+
+function backspace() {
+  if (currentExpression.endsWith(' ∪ ')||currentExpression.endsWith(' ∩ ')||currentExpression.endsWith(' - '))
+    currentExpression=currentExpression.slice(0,-3);
+  else currentExpression=currentExpression.slice(0,-1);
+  if (currentExpression==='') currentExpression='∅';
+  renderCanvas();
+}
+
+function clearExpr() { currentExpression=mode==='expr'?'':'∅'; selectedRegions.clear(); renderCanvas(); }
+
+function updateDisplay(isValid=true) {
+  const d=document.getElementById('display');
+  d.className='display-screen';
+  if (currentExpression==='') { d.textContent='Type expression…'; d.classList.add('hint'); }
+  else { d.textContent=currentExpression; if (!isValid) d.classList.add('error'); }
+}
+
+function applyComplements(expr) {
+  let chars=expr.split('');
+  for (let i=0;i<chars.length;i++) {
+    if (chars[i]==="'") {
+      let end=i-1; while(end>=0&&chars[end]===' ') end--;
+      if (end<0) continue;
+      let start=end;
+      if (chars[end]===')') {
+        let depth=0;
+        for(start=end;start>=0;start--) { if(chars[start]===')') depth++; if(chars[start]==='(') depth--; if(depth===0) break; }
+      }
+      let operand=chars.slice(start,end+1).join('');
+      chars.splice(start,i-start+1,'!','(',operand,')'); i=start;
+    }
+  }
+  return chars.join('');
+}
+
+function parseToJS(expr) {
+  if (!expr||expr==='∅') return 'false';
+  let js=applyComplements(expr);
+  js=js.replace(/∪/g,' || ').replace(/∩/g,' && ').replace(/-/g,' && ! ');
+  js=js.replace(/A/g,'a').replace(/B/g,'b').replace(/C/g,'c').replace(/U/g,'true').replace(/∅/g,'false');
+  return js;
+}
+
+function evalJS(js,a,b,c) { try { return new Function('a','b','c',`return !!(${js});`)(a,b,c); } catch(e) { return null; } }
+
+// dist used for click-region detection
+function dist(x1,y1,x2,y2) { return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
+
+function getHeuristicExpression(regions) {
+  if (regions.size===0) return '∅';
+  const total=numSets===2?4:8;
+  if (regions.size===total) return 'U';
+  const exprs=[], vars=numSets===2?['A','B']:['A','B','C'];
+  vars.forEach(v=>{ exprs.push(v); exprs.push(`${v}'`); });
+  for(let i=0;i<vars.length;i++) {
+    for(let j=i+1;j<vars.length;j++) {
+      exprs.push(`${vars[i]} ∪ ${vars[j]}`,`${vars[i]} ∩ ${vars[j]}`);
+      exprs.push(`(${vars[i]} ∪ ${vars[j]})'`,`(${vars[i]} ∩ ${vars[j]})'`);
+    }
+    for(let j=0;j<vars.length;j++) if(i!==j) exprs.push(`${vars[i]} - ${vars[j]}`);
+  }
+  if (numSets===3) exprs.push('A ∪ B ∪ C','A ∩ B ∩ C','(A ∪ B ∪ C)\'','(A ∩ B ∩ C)\'',
+    '(A ∪ B) ∩ C','(A ∪ C) ∩ B','(B ∪ C) ∩ A','A ∪ (B ∩ C)','B ∪ (A ∩ C)','C ∪ (A ∩ B)',
+    'A ∩ (B ∪ C)','B ∩ (A ∪ C)','C ∩ (A ∪ B)','A - (B ∪ C)','B - (A ∪ C)','C - (A ∪ B)');
+  for(let expr of exprs) {
+    const js=parseToJS(expr); let ok=true;
+    for(let i=0;i<total;i++) {
+      const bin=i.toString(2).padStart(numSets===2?2:3,'0');
+      if (evalJS(js,bin[0]==='1',bin[1]==='1',bin[2]==='1')!==regions.has(bin)){ok=false;break;}
+    }
+    if(ok) return expr;
+  }
+  let terms=[];
+  regions.forEach(bin=>{
+    let t=[];
+    t.push(bin[0]==='1'?'A':"A'"); t.push(bin[1]==='1'?'B':"B'");
+    if(numSets===3) t.push(bin[2]==='1'?'C':"C'");
+    terms.push(`(${t.join(' ∩ ')})`);
+  });
+  return terms.join(' ∪ ');
+}
+
+// Fast canvas paths — no pixel loop needed
+function circPath(c) {
+  ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
+}
+
+// Shade a region defined by a boolean function using canvas clip()
+// regionFn(inA,inB,inC) → true if pixel is in the region
+// We approximate by rendering circle intersections via composite operations
+function renderCanvas() {
+  ctx.clearRect(0,0,W,H);
+  let jsExpr='false', isValid=true;
+  if (mode==='expr' && currentExpression!=='' && currentExpression!=='∅') {
+    jsExpr = parseToJS(currentExpression);
+    if (evalJS(jsExpr,true,true,true)===null) isValid=false;
+  }
+  updateDisplay(isValid);
+
+  // Background
+  ctx.fillStyle='#fafbff'; ctx.fillRect(0,0,W,H);
+
+  // Determine which of the up to 8 atomic regions to shade
+  const total = numSets===2 ? 4 : 8;
+  const shadedRegions = new Set();
+  for (let i=0; i<total; i++) {
+    const bin = i.toString(2).padStart(numSets===2?2:3,'0');
+    const inA=bin[0]==='1', inB=bin[1]==='1', inC=bin[2]==='1';
+    let shade=false;
+    if (mode==='expr' && isValid)  shade = !!evalJS(jsExpr, inA, inB, inC);
+    else if (mode==='diag')        shade = selectedRegions.has(bin);
+    if (shade) shadedRegions.add(bin);
+  }
+
+  // For each atomic region, build the clip mask and fill
+  // We use an offscreen strategy: draw shading via globalCompositeOperation
+  if (shadedRegions.size > 0) {
+    const ofc = document.createElement('canvas');
+    ofc.width=W; ofc.height=H;
+    const oc = ofc.getContext('2d');
+
+    shadedRegions.forEach(bin => {
+      const inA=bin[0]==='1', inB=bin[1]==='1', inC=bin.length>2?bin[2]==='1':false;
+
+      oc.save();
+      // Build clip region: intersection of included circles, minus excluded circles
+      // Step 1: clip to intersection of all "in" circles
+      const inCircles  = [];
+      const outCircles = [];
+      if (inA) inCircles.push(circles.A); else outCircles.push(circles.A);
+      if (inB) inCircles.push(circles.B); else outCircles.push(circles.B);
+      if (numSets===3) { if (inC) inCircles.push(circles.C); else outCircles.push(circles.C); }
+
+      // Clip to the intersection of inCircles
+      if (inCircles.length > 0) {
+        // Start from whole canvas, intersect each circle
+        oc.beginPath(); oc.rect(0,0,W,H);
+        inCircles.forEach(c => {
+          const tmp = document.createElement('canvas');
+          tmp.width=W; tmp.height=H;
+          // We use a region path approach: Path2D intersection via clip stacking
+        });
+        // Simpler: just clip each circle successively
+        inCircles.forEach(c => {
+          oc.beginPath(); oc.arc(c.x,c.y,c.r,0,Math.PI*2); oc.clip();
+        });
+      }
+
+      // Now punch out "out" circles using destination-out
+      // First fill the clipped region
+      oc.fillStyle='rgba(99,102,241,0.42)';
+      oc.fillRect(0,0,W,H);
+
+      // Subtract outCircles
+      oc.globalCompositeOperation='destination-out';
+      outCircles.forEach(c => {
+        oc.beginPath(); oc.arc(c.x,c.y,c.r,0,Math.PI*2);
+        oc.fill();
+      });
+      oc.restore();
+    });
+
+    ctx.drawImage(ofc,0,0);
+  }
+
+  // Draw circle outlines
+  ctx.shadowColor='rgba(79,70,229,0.2)'; ctx.shadowBlur=12;
+  ctx.lineWidth=2.5; ctx.strokeStyle='#4f46e5';
+  circPath(circles.A); ctx.stroke();
+  circPath(circles.B); ctx.stroke();
+  if(numSets===3){circPath(circles.C); ctx.stroke();}
+  ctx.shadowBlur=0;
+
+  // Universe border
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.strokeRect(10,10,W-20,H-20); ctx.setLineDash([]);
+
+  // Labels
+  ctx.font='bold 18px Inter,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  function label(txt,x,y) {
+    ctx.lineWidth=4; ctx.strokeStyle='rgba(250,251,255,0.92)'; ctx.strokeText(txt,x,y);
+    ctx.fillStyle='#312e81'; ctx.fillText(txt,x,y);
+  }
+  label('U',28,28);
+  label('A',circles.A.x-circles.A.r+22,circles.A.y-26);
+  label('B',circles.B.x+circles.B.r-22,circles.B.y-26);
+  if(numSets===3) label('C',circles.C.x,circles.C.y+circles.C.r-22);
+}
+
+canvas.addEventListener('mousedown',e=>{
+  if(mode!=='diag') return;
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(W/rect.width), y=(e.clientY-rect.top)*(H/rect.height);
+  if(x<10||x>W-10||y<10||y>H-10) return;
+  const inA=dist(x,y,circles.A.x,circles.A.y)<=circles.A.r;
+  const inB=dist(x,y,circles.B.x,circles.B.y)<=circles.B.r;
+  const inC=numSets===3?dist(x,y,circles.C.x,circles.C.y)<=circles.C.r:false;
+  let bin=(inA?'1':'0')+(inB?'1':'0')+(numSets===3?(inC?'1':'0'):'');
+  if(selectedRegions.has(bin)) selectedRegions.delete(bin); else selectedRegions.add(bin);
+  currentExpression=getHeuristicExpression(selectedRegions);
+  renderCanvas();
+});
+
+// Touch support for Venn
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  const t=e.touches[0];
+  canvas.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY}));
+},{passive:false});
+
+// BOOT
+updateGeometry();
+renderCanvas();
+</script>
+</body>
+</html>
