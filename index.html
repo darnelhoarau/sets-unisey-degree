@@ -2156,11 +2156,11 @@ canvas.addEventListener('touchstart',e=>{
 // ── SCROLL-SAFE INSTANT TAP ──
 // Track touch start position. If the finger moves more than 8px before
 // lifting, treat it as a scroll gesture and never fire the button.
-// If it stays within 8px, fire on touchend — still faster than the
-// browser's 300ms click delay but safe for scroll.
+// After firing click() on touchend, we suppress the browser's own
+// synthetic click (which would fire ~300ms later) via a one-shot flag.
 (function() {
   let touchStartX = 0, touchStartY = 0, touchTarget = null, moved = false;
-  const THRESHOLD = 8; // px of movement that counts as a scroll
+  const THRESHOLD = 8;
 
   document.addEventListener('touchstart', function(e) {
     const btn = e.target.closest('button:not([disabled])');
@@ -2169,9 +2169,8 @@ canvas.addEventListener('touchstart',e=>{
     moved = false;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
-    // Visual press feedback immediately on touch-down
     btn.style.opacity = '0.7';
-  }, { passive: true }); // passive:true so scroll is never blocked
+  }, { passive: true });
 
   document.addEventListener('touchmove', function(e) {
     if (!touchTarget) return;
@@ -2180,15 +2179,24 @@ canvas.addEventListener('touchstart',e=>{
     if (Math.sqrt(dx*dx + dy*dy) > THRESHOLD) {
       moved = true;
       touchTarget.style.opacity = '';
-      touchTarget = null; // abandon — user is scrolling
+      touchTarget = null;
     }
   }, { passive: true });
 
   document.addEventListener('touchend', function(e) {
     if (!touchTarget || moved) { touchTarget = null; return; }
-    touchTarget.style.opacity = '';
-    touchTarget.click();
+    const btn = touchTarget;
     touchTarget = null;
+    btn.style.opacity = '';
+
+    // Suppress the browser's own synthetic click that follows touchend
+    // by catching it once on the capture phase and swallowing it.
+    btn.addEventListener('click', function suppress(ev) {
+      ev.stopImmediatePropagation();
+      btn.removeEventListener('click', suppress, true);
+    }, { capture: true, once: true });
+
+    btn.click();
   }, { passive: true });
 
   document.addEventListener('touchcancel', function() {
