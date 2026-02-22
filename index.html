@@ -168,7 +168,33 @@ header {
   width: 100%;
   max-width: 1160px;
   margin-bottom: 18px;
+  position: relative; /* needed for fade overlays */
 }
+
+/* Fade overlays that signal more content left/right */
+.tabs-wrap::before,
+.tabs-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: var(--r);
+}
+.tabs-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
+}
+.tabs-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255,255,255,0.95), transparent);
+}
+/* JS adds these classes to show fades */
+.tabs-wrap.fade-left::before  { opacity: 1; }
+.tabs-wrap.fade-right::after  { opacity: 1; }
 
 .tabs {
   display: flex;
@@ -181,8 +207,31 @@ header {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 .tabs::-webkit-scrollbar { display: none; }
+
+/* Swipe hint pill — only shown on touch devices, fades out after first scroll */
+.tabs-swipe-hint {
+  display: none;
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-light);
+  white-space: nowrap;
+  gap: 4px;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+@media (hover: none) and (pointer: coarse) {
+  /* Only show on actual touch devices */
+  .tabs-swipe-hint { display: flex; }
+  .tabs-wrap { margin-bottom: 32px; } /* extra space for hint */
+}
 
 .tab-btn {
   padding: 9px 14px;
@@ -684,7 +733,7 @@ canvas {
 
 <!-- ═══ TABS ═══ -->
 <div class="tabs-wrap">
-  <div class="tabs">
+  <div class="tabs" id="tabs-bar">
     <button class="tab-btn active" onclick="switchTab('explorer',this)"><span class="tab-icon">⬤</span>Venn Diagrams</button>
     <button class="tab-btn" onclick="switchTab('membership',this)"><span class="tab-icon">∈</span>Membership</button>
     <button class="tab-btn" onclick="switchTab('subsets',this)"><span class="tab-icon">⊆</span>Subsets &amp; |A|</button>
@@ -692,6 +741,7 @@ canvas {
     <button class="tab-btn" onclick="switchTab('roster2builder',this)"><span class="tab-icon">↺</span>Roster → Builder</button>
     <button class="tab-btn" onclick="switchTab('operations',this)"><span class="tab-icon">∪</span>Operations</button>
   </div>
+  <div class="tabs-swipe-hint" id="tabs-hint">← swipe for more →</div>
 </div>
 
 <!-- ═══ MAIN APP ═══ -->
@@ -2103,18 +2153,78 @@ canvas.addEventListener('touchstart',e=>{
   canvas.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY}));
 },{passive:false});
 
-// ── INSTANT TOUCH: fire buttons on touchstart, not touchend ──
-// This eliminates the remaining ~80-100ms gap between finger-down and action.
-document.addEventListener('touchstart', function(e) {
-  const btn = e.target.closest('button:not([disabled]), .mc-btn, .tf-btn');
-  if (!btn) return;
-  // Don't intercept the Venn canvas touch (handled separately)
-  if (btn.closest('#venn')) return;
-  e.preventDefault();
-  btn.click();
-}, { passive: false });
+// ── SCROLL-SAFE INSTANT TAP ──
+// Track touch start position. If the finger moves more than 8px before
+// lifting, treat it as a scroll gesture and never fire the button.
+// If it stays within 8px, fire on touchend — still faster than the
+// browser's 300ms click delay but safe for scroll.
+(function() {
+  let touchStartX = 0, touchStartY = 0, touchTarget = null, moved = false;
+  const THRESHOLD = 8; // px of movement that counts as a scroll
 
-// BOOT
+  document.addEventListener('touchstart', function(e) {
+    const btn = e.target.closest('button:not([disabled])');
+    if (!btn || btn.closest('canvas')) { touchTarget = null; return; }
+    touchTarget = btn;
+    moved = false;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    // Visual press feedback immediately on touch-down
+    btn.style.opacity = '0.7';
+  }, { passive: true }); // passive:true so scroll is never blocked
+
+  document.addEventListener('touchmove', function(e) {
+    if (!touchTarget) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (Math.sqrt(dx*dx + dy*dy) > THRESHOLD) {
+      moved = true;
+      touchTarget.style.opacity = '';
+      touchTarget = null; // abandon — user is scrolling
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    if (!touchTarget || moved) { touchTarget = null; return; }
+    touchTarget.style.opacity = '';
+    touchTarget.click();
+    touchTarget = null;
+  }, { passive: true });
+
+  document.addEventListener('touchcancel', function() {
+    if (touchTarget) touchTarget.style.opacity = '';
+    touchTarget = null;
+  }, { passive: true });
+})();
+
+// ── TABS SCROLL INDICATORS ──
+(function() {
+  const tabsBar  = document.getElementById('tabs-bar');
+  const tabsWrap = tabsBar.parentElement;
+  const hint     = document.getElementById('tabs-hint');
+  let hintDismissed = false;
+
+  function updateFades() {
+    const sl = tabsBar.scrollLeft;
+    const maxSl = tabsBar.scrollWidth - tabsBar.clientWidth;
+    tabsWrap.classList.toggle('fade-left',  sl > 4);
+    tabsWrap.classList.toggle('fade-right', sl < maxSl - 4);
+  }
+
+  tabsBar.addEventListener('scroll', function() {
+    updateFades();
+    // Fade out and remove the swipe hint once the user actually scrolls
+    if (!hintDismissed && hint) {
+      hintDismissed = true;
+      hint.style.opacity = '0';
+      setTimeout(() => { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 400);
+    }
+  }, { passive: true });
+
+  // Set initial state after layout settles
+  requestAnimationFrame(updateFades);
+  window.addEventListener('resize', updateFades, { passive: true });
+})();
 updateGeometry();
 // Sync saved shade colour to the custom picker and swatch
 const savedShade = localStorage.getItem('venn_shade') || DEFAULT_SHADE;
